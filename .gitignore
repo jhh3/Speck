@@ -26,3 +26,11 @@
 *.exe
 *.out
 *.app
+
+# Ignore build and lib dirs
+build
+lib/*
+
+bin/*
+
+.DS_Store
