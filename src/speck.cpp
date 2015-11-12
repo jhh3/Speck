@@ -24,6 +24,8 @@ uint64_t SpeckCipher::encrypt(uint64_t plaintext) {
 	rs.a = (plaintext >> WORD_SIZE) & MOD_MASK;
 	rs.b = plaintext & MOD_MASK;
 
+// Reduce binary size
+// Decide MODE at compile time
 #if ECB
 	for (int i = 0; i < ROUNDS; ++i) {
 		rs = encrypt_round(rs.a, rs.b, key_schedule[i]);
@@ -51,6 +53,8 @@ uint64_t SpeckCipher::decrypt(uint64_t ciphertext) {
 	rs.a = (ciphertext >> WORD_SIZE) & MOD_MASK;
 	rs.b = ciphertext & MOD_MASK;
 
+// Reduce binary size
+// Decide MODE at compile time
 #if ECB
 	for (int i = ROUNDS - 1; i >= 0; --i) {
 		rs = decrypt_round(rs.a, rs.b, key_schedule[i]);
