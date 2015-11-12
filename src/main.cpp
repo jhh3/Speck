@@ -6,7 +6,6 @@ int main(void) {
 
 	uint64_t key = 0x1918111009080100;
 	uint64_t plaintext = 0x6574694c;
-	plaintext = 0xdeadbeef;
 
 	SpeckCipher sc(key);
 

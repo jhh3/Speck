@@ -16,9 +16,16 @@ TEST_GROUP(Speck) {
 	}
 };
 
-TEST(Speck, Encrypt) {
-	uint64_t plaintext = 0xdeadbeef;
-	CHECK(plaintext == sc->decrypt(sc->encrypt(plaintext)));
+TEST(Speck, Encrypt_Speck32_64) {
+	uint64_t plaintext = 0x6574694c;
+	uint64_t ciphertext = 0xa86842f2;
+	CHECK(ciphertext == sc->encrypt(plaintext));
+}
+
+TEST(Speck, Decrypt_Speck32_64) {
+	uint64_t plaintext = 0x6574694c;
+	uint64_t ciphertext = 0xa86842f2;
+	CHECK(plaintext == sc->decrypt(ciphertext));
 }
 
 int main(int ac, char** av) {
