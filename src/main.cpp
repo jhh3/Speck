@@ -15,6 +15,17 @@ int main(void) {
 	uint64_t de = sc.decrypt(ciphertext);
 	std::cout << "Decrypted plaintext " << std::hex << de << "\n";
 
+	const char* str_plaintext = "This is a test.";
+	int len = strlen(str_plaintext);
+	char encrypted_str[60];
+	char decrypted_str[60];
+
+	std::cout << "Plaintext: " << str_plaintext << "\n";
+	sc.encrypt_str(str_plaintext, len, encrypted_str);
+	std::cout << "Encrypted: " << encrypted_str << "\n";
+	sc.decrypt_str(encrypted_str, len, decrypted_str);
+	std::cout << "Decrypted: " << decrypted_str << "\n";
+
 	std::cout << "Ending Speck\n";
 	return 0;
 }

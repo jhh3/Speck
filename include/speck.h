@@ -24,8 +24,6 @@
 #ifndef _SPECK_H_
 #define _SPECK_H_
 
-typedef unsigned long long uint64_t;
-
 #define BLOCK_SIZE 32
 #define WORD_SIZE (BLOCK_SIZE >> 1)
 #define KEY_SIZE 64
@@ -60,6 +58,16 @@ typedef unsigned long long uint64_t;
 #define CFB (MODE == 5)
 #define OFB (MODE == 6)
 
+typedef unsigned long long uint64_t;
+typedef unsigned int uint32_t;
+
+#define N_BLOCKS(LEN) (LEN % 4 == 0 ? LEN / 4 : (LEN / 4) + 1);
+
+union block32_t {
+	uint32_t block;
+	char data[sizeof(uint32_t)];
+};
+
 struct RoundResult {
 	uint64_t a;
 	uint64_t b;
@@ -69,12 +77,18 @@ class SpeckCipher {
 	public:
 		SpeckCipher(uint64_t _key);
 
-		uint64_t encrypt(uint64_t plaintext);
-		uint64_t decrypt(uint64_t ciphertext);
+		uint32_t encrypt(uint32_t plaintext);
+		uint32_t decrypt(uint32_t ciphertext);
+
+		void encrypt_str(const char* in, int len, char* out);
+		void decrypt_str(const char* in, int len, char* out);
 	private:
 		// Single rounds of Feistel operation.
 		RoundResult encrypt_round(uint64_t x, uint64_t y, uint64_t k);
 		RoundResult decrypt_round(uint64_t x, uint64_t y, uint64_t k);
+
+		void encrypt_blocks(block32_t* in_blocks, int n_blocks, block32_t* out_blocks);
+		void decrypt_blocks(block32_t* in_blocks, int n_blocks, block32_t* out_blocks);
 
 		uint64_t key;
 		uint64_t key_schedule[ROUNDS];

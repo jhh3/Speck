@@ -19,10 +19,32 @@ SpeckCipher::SpeckCipher(uint64_t _key) {
 	}
 };
 
-uint64_t SpeckCipher::encrypt(uint64_t plaintext) {
+void SpeckCipher::encrypt_str(const char* in, int len, char* out) {
+	int n_blocks = N_BLOCKS(len);
+	encrypt_blocks((block32_t*) in, n_blocks, (block32_t*) out);
+}
+
+void SpeckCipher::decrypt_str(const char* in, int len, char* out) {
+	int n_blocks = N_BLOCKS(len);
+	decrypt_blocks((block32_t*) in, n_blocks, (block32_t*) out);
+}
+
+void SpeckCipher::encrypt_blocks(block32_t* in_blocks, int n_blocks, block32_t* out_blocks) {
+	for (int i = 0; i < n_blocks; ++i) {
+		out_blocks[i].block = encrypt(in_blocks[i].block);
+	}
+}
+
+void SpeckCipher::decrypt_blocks(block32_t* in_blocks, int n_blocks, block32_t* out_blocks) {
+	for (int i = 0; i < n_blocks; ++i) {
+		out_blocks[i].block = decrypt(in_blocks[i].block);
+	}
+}
+
+uint32_t SpeckCipher::encrypt(uint32_t plaintext) {
 	RoundResult rs;
-	rs.a = (plaintext >> WORD_SIZE) & MOD_MASK;
-	rs.b = plaintext & MOD_MASK;
+	rs.a = (((uint64_t) plaintext) >> WORD_SIZE) & MOD_MASK;
+	rs.b = ((uint64_t) plaintext) & MOD_MASK;
 
 // Reduce binary size
 // Decide MODE at compile time
@@ -30,7 +52,7 @@ uint64_t SpeckCipher::encrypt(uint64_t plaintext) {
 	for (int i = 0; i < ROUNDS; ++i) {
 		rs = encrypt_round(rs.a, rs.b, key_schedule[i]);
 	}
-	return (rs.a << WORD_SIZE) + rs.b;
+	return (uint32_t) ((rs.a << WORD_SIZE) + rs.b);
 #elif CTR
 	//TODO
 #elif CTR
@@ -48,10 +70,10 @@ uint64_t SpeckCipher::encrypt(uint64_t plaintext) {
 #endif
 }
 
-uint64_t SpeckCipher::decrypt(uint64_t ciphertext) {
+uint32_t SpeckCipher::decrypt(uint32_t ciphertext) {
 	RoundResult rs;
-	rs.a = (ciphertext >> WORD_SIZE) & MOD_MASK;
-	rs.b = ciphertext & MOD_MASK;
+	rs.a = (((uint64_t) ciphertext) >> WORD_SIZE) & MOD_MASK;
+	rs.b = ((uint64_t) ciphertext) & MOD_MASK;
 
 // Reduce binary size
 // Decide MODE at compile time
@@ -59,7 +81,7 @@ uint64_t SpeckCipher::decrypt(uint64_t ciphertext) {
 	for (int i = ROUNDS - 1; i >= 0; --i) {
 		rs = decrypt_round(rs.a, rs.b, key_schedule[i]);
 	}
-	return (rs.a << WORD_SIZE) + rs.b;
+	return (uint64_t) ((rs.a << WORD_SIZE) + rs.b);
 #elif CTR
 	//TODO
 #elif CTR
