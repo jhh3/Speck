@@ -63,6 +63,7 @@ typedef unsigned int uint32_t;
 
 #define N_BLOCKS(LEN) (LEN % 4 == 0 ? LEN / 4 : (LEN / 4) + 1);
 
+// Not necessary as a union but might be convenient later
 union block32_t {
 	uint32_t block;
 	char data[sizeof(uint32_t)];
