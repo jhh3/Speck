@@ -23,6 +23,7 @@
 
 #ifndef _SPECK_H_
 #define _SPECK_H_
+#include <stdint.h>
 
 #define BLOCK_SIZE 32
 #define WORD_SIZE (BLOCK_SIZE >> 1)
@@ -58,12 +59,9 @@
 #define CFB (MODE == 5)
 #define OFB (MODE == 6)
 
-typedef unsigned long long uint64_t;
-typedef unsigned int uint32_t;
-
 #define N_BLOCKS(LEN) (LEN % 4 == 0 ? LEN / 4 : (LEN / 4) + 1);
 
-// Not necessary as a union but might be convenient later
+// Not necessary but might be convenient later
 union block32_t {
 	uint32_t block;
 	char data[sizeof(uint32_t)];
