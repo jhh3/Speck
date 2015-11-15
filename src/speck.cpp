@@ -81,7 +81,7 @@ uint32_t SpeckCipher::decrypt(uint32_t ciphertext) {
 	for (int i = ROUNDS - 1; i >= 0; --i) {
 		rs = decrypt_round(rs.a, rs.b, key_schedule[i]);
 	}
-	return (uint64_t) ((rs.a << WORD_SIZE) + rs.b);
+	return (uint32_t) ((rs.a << WORD_SIZE) + rs.b);
 #elif CTR
 	//TODO
 #elif CTR
